@@ -29,7 +29,6 @@ const sf::Time fpsupdateInterval = sf::seconds(1.0f);
 class Game
 {
     public:
-    sf::Event event;
     sf::RenderWindow *window;
     sf::RectangleShape dividLine;
     

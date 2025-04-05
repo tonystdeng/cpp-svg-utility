@@ -5,12 +5,12 @@ std::vector<sl::pointgraph> getPointgraph(char* path);
 sl::point apply(double rotation,sl::point ft);
 Game::Game(char * path)
 {
-    window=new sf::RenderWindow(sf::VideoMode(width,height),"fps: ");
+    window=new sf::RenderWindow(sf::VideoMode({width,height}),"fps: ");
     window->setFramerateLimit(60);
     sl::fileinfo filetext=sl::fileLoader(path);
     //sl::printFile(filetext); // testing
     fileinfo=sl::file2vector(filetext);
-    sl::printInfo(fileinfo); // testing
+    //sl::printInfo(fileinfo); // testing
     std::vector<sl::pointgraph> parts=sl::svg2points(fileinfo);
 
     std::array<double, 7> repoinfo=sl::getrepoinfo(parts,std::min({width,height}));
@@ -19,14 +19,14 @@ Game::Game(char * path)
 
     parts=sl::resizeRepo(parts,xmin-reposition,ymin-reposition,resRate);
     //*/std::vector<sl::pointgraph> parts=getPointgraph(path);
-    sf::VertexArray svgshape{sf::LineStrip},simplified{sf::Points};
+    sf::VertexArray svgshape{sf::PrimitiveType::LineStrip},simplified{sf::PrimitiveType::Points};
     for (sl::pointgraph points:parts){
-        for (std::array<double,2>i:points){svgshape.append(sf::Vector2f{(float)i[0],(float)i[1]});}
+        for (std::array<double,2>i:points){svgshape.append(sf::Vertex{sf::Vector2f{(float)i[0],(float)i[1]}});}
         svgshapes.push_back(svgshape);  svgshape.clear();
 
         points=sl::simplify(points);
         //for (int i=0;i<points.size();i++){std::cout<<points[i][0]<<" "<<points[i][1]<<"\n";}
-        for (std::array<double,2>i:points){simplified.append(sf::Vector2f{(float)i[0]+hw,(float)i[1]});}
+        for (std::array<double,2>i:points){simplified.append(sf::Vertex{sf::Vector2f{(float)i[0]+hw,(float)i[1]}});}
         simplifieds.push_back(simplified);  simplified.clear();
     }
     dividLine.setSize(sf::Vector2f(width/256,height));
@@ -81,8 +81,8 @@ void Game::common()
 
 bool Game::checkEvent()
 {
-    while (window->pollEvent(event)){
-        if (event.type==sf::Event::Closed){
+    while (const std::optional event = window->pollEvent()){
+        if (event->getIf<sf::Event::Closed>()){
             window->close();
             return true;}
     }return false;
