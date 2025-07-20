@@ -310,7 +310,9 @@ sl::pointgraph sl::simplify(pointgraph old,double minLen,double maxLen,double mi
 {
     pointgraph returns={old[0]};
     for (int i=1;i<old.size();i++){
-        point last=returns[returns.size()-1],current=old[i],next=old[i+1];
+        point last=returns[returns.size()-1];
+        point current=old[i];
+        point next=(i==old.size()-1) ? old[0] : old[i+1];
 
         double dx=last[0]-current[0],dy=last[1]-current[1];
         double distant=std::sqrt(dx*dx+dy*dy);
